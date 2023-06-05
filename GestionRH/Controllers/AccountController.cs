@@ -9,13 +9,13 @@ using System.Security.Claims;
 
 namespace GestionRH.Controllers
 {
-    public class UsersController : ControllerBase
+    public class AccountController : ControllerBase
     {
-        private readonly ILogger<UsersController> _logger;
+        private readonly ILogger<AccountController> _logger;
         private readonly IUserService _userService;
         private readonly IJwtAuthManager _jwtAuthManager;
         private readonly DataContext _context;
-        public UsersController(DataContext dataContext, ILogger<UsersController> logger, IUserService userService, IJwtAuthManager jwtAuthManager)
+        public AccountController(DataContext dataContext, ILogger<AccountController> logger, IUserService userService, IJwtAuthManager jwtAuthManager)
         {
             _logger = logger;
             _userService = userService;
@@ -72,25 +72,76 @@ namespace GestionRH.Controllers
         [HttpPost]
         [Route("addUser")]
         [AllowAnonymous]
-        public async Task<IActionResult> addUser([FromBody] User user)
+        public async Task<IActionResult> AddUser([FromBody] User user)
         {
             user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(user.PasswordHash);
             _context.Users.Add(user);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return Ok(user);
         }
         
         [HttpPost]
         [Route("addEmploye")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> addEmploye([FromBody] User user)
+        public async Task<IActionResult> AddEmploye([FromBody] Employe user)
         {
+            if (_userService.IsAnExistingUser(user.Email))
+            {
+                return BadRequest("User already exists");
+            }
             user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(user.PasswordHash);
-            user.role = Role.Employe;
-            _context.Users.Add(user);
-            _context.SaveChanges();
+            user.role = Role.Employee;
+            _context.Employees.Add(user);
+            await _context.SaveChangesAsync();
             return Ok(user);
         }
+
+        [HttpPut]
+        [Route("updateUser/{id}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> UpdateUser(int id, [FromBody] Employe user)
+        {
+            var existingUser = await _context.Employees.FindAsync(id);
+
+            if (existingUser == null)
+            {
+                return NotFound();
+            }
+
+            existingUser.prenom = user.prenom;
+            existingUser.Email = user.Email;
+            existingUser.nom = user.nom;
+            existingUser.Poste = user.Poste;
+            existingUser.Cin = user.Cin;
+            existingUser.Adresse = user.Adresse;
+            existingUser.Telephone = user.Telephone;
+            existingUser.DateNaissance = user.DateNaissance;
+            // Update other properties as needed
+
+            _context.Employees.Update(existingUser);
+            await _context.SaveChangesAsync();
+
+            return Ok(existingUser);
+        }
+
+        [HttpDelete]
+        [Route("deleteUser/{id}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> DeleteUser(int id)
+        {
+            var existingUser = await _context.Employees.FindAsync(id);
+
+            if (existingUser == null)
+            {
+                return NotFound();
+            }
+
+            _context.Employees.Remove(existingUser);
+            await _context.SaveChangesAsync();
+
+            return Ok();
+        }
+
 
 
     }

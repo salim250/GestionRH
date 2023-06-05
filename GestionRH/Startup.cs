@@ -1,4 +1,6 @@
 using GestionRH.Context;
+using GestionRH.Repository;
+using GestionRH.Services;
 using JwtAuthDemo.Infrastructure;
 using JwtAuthDemo.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -85,6 +87,13 @@ namespace GestionRH
             var connectionString = Configuration.GetConnectionString("SqlConnection");
             services.AddDbContext<DataContext>(options =>
             options.UseSqlServer(connectionString));
+
+            services.AddScoped<IExitPermitRepository, ExitPermitRepository>();
+            services.AddScoped<IExitPermitService, ExitPermitService>();
+            services.AddScoped<IVacationRepository, VacationRepository>();
+            services.AddScoped<IVacationService, VacationService>();
+            services.AddScoped<ICreditRepository, CreditRepository>();
+            services.AddScoped<ICreditService, CreditService>();
 
 
 

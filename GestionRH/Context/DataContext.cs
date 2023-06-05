@@ -36,6 +36,7 @@ namespace GestionRH.Context
         public virtual DbSet<Conge> Conge { get; set; }
         public virtual DbSet<Autorisation> Autorisation { get; set; }
         public virtual DbSet<User> Users { get; set; }
+        public virtual DbSet<Employe> Employees { get; set; }
         #endregion
 
     }

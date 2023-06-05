@@ -8,7 +8,6 @@ namespace GestionRH.Model
         public int Id { get; set; }
         public String nom { get; set; }
         public String prenom { get; set; }
-
         public Role role { get; set; }
         public String Email { get; set; }
         public string? PasswordHash { get; set; }
