@@ -5,7 +5,9 @@ using JwtAuthDemo.Infrastructure;
 using JwtAuthDemo.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
+using System.Security.Policy;
 
 namespace GestionRH.Controllers
 {
@@ -79,7 +81,23 @@ namespace GestionRH.Controllers
             await _context.SaveChangesAsync();
             return Ok(user);
         }
+        [HttpGet]
+        [Route("getEmploye")]
+        [Authorize(Roles = "Admin")]
+        public IActionResult getEmploye()
+        {
+            var employees = _context.Employees.ToList();
+            return Ok(employees);
+        }
         
+        [HttpGet]
+        [Route("getEmploye/{id}")]
+        [Authorize(Roles = "Admin")]
+        public IActionResult getEmployeById(int id)
+        {
+            var employees = _context.Employees.Find(id);
+            return Ok(employees);
+        }
         [HttpPost]
         [Route("addEmploye")]
         [Authorize(Roles = "Admin")]
@@ -141,7 +159,6 @@ namespace GestionRH.Controllers
 
             return Ok();
         }
-
 
 
     }
