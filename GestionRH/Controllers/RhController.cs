@@ -4,6 +4,7 @@ using GestionRH.Model;
 using GestionRH.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Security.Claims;
 
@@ -123,7 +124,7 @@ namespace GestionRH.Controllers
         [Authorize(Roles = "ResponsableRH")]
         public async Task<IActionResult> CreditHistories()
         {
-            var credits = _context.Credit.ToList();
+            var credits = _context.Credit.Include(x => x.Employe).ToList();
             return Ok(credits); // Vacation request submitted successfully
         }
 
@@ -132,7 +133,7 @@ namespace GestionRH.Controllers
         [Authorize(Roles = "ResponsableRH")]
         public IActionResult ExitPermitHistories()
         {
-            var exitPermit = _context.Autorisation.ToList();
+            var exitPermit = _context.Autorisation.Include(x => x.Employe).ToList();
             return Ok(exitPermit); // Vacation request submitted successfully
         }
 
@@ -141,7 +142,7 @@ namespace GestionRH.Controllers
         [Authorize(Roles = "ResponsableRH")]
         public async Task<IActionResult> VacationHistories()
         {
-            var conges = _context.Conge.ToList();
+            var conges = _context.Conge.Include(x => x.Employe).ToList();
             return Ok(conges); // Vacation request submitted successfully
         }
     }

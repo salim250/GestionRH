@@ -115,7 +115,7 @@ namespace GestionRH.Controllers
             {
                 return NotFound(); // Employee not found
             }
-            var exitPermit = _context.Autorisation.Where(c => c.Employe == employee).Where(x => x.Status == Status.Encours).ToList();
+            var exitPermit = _context.Autorisation.Where(c => c.Employe == employee).ToList();
             return Ok(exitPermit); // Vacation request submitted successfully
         }
         
