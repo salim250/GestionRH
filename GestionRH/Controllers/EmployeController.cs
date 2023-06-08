@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using GestionRH.Context;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
+using JwtAuthDemo.Infrastructure;
 
 namespace GestionRH.Controllers
 {
@@ -12,19 +14,20 @@ namespace GestionRH.Controllers
     public class EmployeController : ControllerBase
     {
         private readonly DataContext _context;
-        public EmployeController(DataContext context)
+        private readonly IJwtAuthManager _jwtAuthManager;
+        public EmployeController(DataContext context, IJwtAuthManager jwtAuthManager)
         {
             _context = context;
+            _jwtAuthManager = jwtAuthManager;
         }
         [HttpPost]
         [Route("AskForVacation")]
         [Authorize(Roles = "Employee")]
         public async Task<IActionResult> AskForVacation([FromBody] Conge vacationRequest)
         {
-            var employeeId = GetLoggedInUserId(); // Retrieve the ID of the logged-in employee
 
-            var employee = _context.Employees.FirstOrDefault(e => e.Id == employeeId);
-
+            var employeeId = GetLoggedInUserId();
+            var employee = _context.Employees.FirstOrDefault(e => e.Email == employeeId);
             if (employee == null)
             {
                 return NotFound(); // Employee not found
@@ -45,7 +48,7 @@ namespace GestionRH.Controllers
         {
             var employeeId = GetLoggedInUserId(); // Retrieve the ID of the logged-in employee
 
-            var employee = _context.Employees.FirstOrDefault(e => e.Id == employeeId);
+            var employee = _context.Employees.FirstOrDefault(e => e.Email == employeeId);
 
             if (employee == null)
             {
@@ -67,7 +70,7 @@ namespace GestionRH.Controllers
         {
             var employeeId = GetLoggedInUserId(); // Retrieve the ID of the logged-in employee
 
-            var employee = _context.Employees.FirstOrDefault(e => e.Id == employeeId);
+            var employee = _context.Employees.FirstOrDefault(e => e.Email == employeeId);
 
             if (employee == null)
             {
@@ -85,68 +88,63 @@ namespace GestionRH.Controllers
         [HttpGet]
         [Route("CreditHistories")]
         [Authorize(Roles = "Employee")]
-        public async Task<IActionResult> CreditHistories()
+        public IActionResult CreditHistories()
         {
             var employeeId = GetLoggedInUserId(); // Retrieve the ID of the logged-in employee
 
-            var employee = _context.Employees.FirstOrDefault(e => e.Id == employeeId);
+            var employee = _context.Employees.FirstOrDefault(e => e.Email == employeeId);
 
             if (employee == null)
             {
                 return NotFound(); // Employee not found
             }
-            var credits = employee.Credits;
+            var credits = _context.Credit.Where(c => c.Employe == employee).Where(x => x.Status == Status.Encours).ToList();
             return Ok(credits); // Vacation request submitted successfully
         }
         
         [HttpGet]
         [Route("ExitPermitHistories")]
         [Authorize(Roles = "Employee")]
-        public async Task<IActionResult> ExitPermitHistories()
+        public IActionResult ExitPermitHistories()
         {
             var employeeId = GetLoggedInUserId(); // Retrieve the ID of the logged-in employee
 
-            var employee = _context.Employees.FirstOrDefault(e => e.Id == employeeId);
+            var employee = _context.Employees.FirstOrDefault(e => e.Email == employeeId);
 
             if (employee == null)
             {
                 return NotFound(); // Employee not found
             }
-            var exitPermit = employee.Conges;
+            var exitPermit = _context.Autorisation.Where(c => c.Employe == employee).Where(x => x.Status == Status.Encours).ToList();
             return Ok(exitPermit); // Vacation request submitted successfully
         }
         
         [HttpGet]
         [Route("VacationHistories")]
         [Authorize(Roles = "Employee")]
-        public async Task<IActionResult> VacationHistories()
+        public IActionResult VacationHistories()
         {
             var employeeId = GetLoggedInUserId(); // Retrieve the ID of the logged-in employee
 
-            var employee = _context.Employees.FirstOrDefault(e => e.Id == employeeId);
+            var employee = _context.Employees.FirstOrDefault(e => e.Email == employeeId);
 
             if (employee == null)
             {
                 return NotFound(); // Employee not found
             }
-            var conges = employee.Conges;
+            var conges = _context.Conge.Where(c => c.Employe == employee).Where(x => x.Status == Status.Encours).ToList();
             return Ok(conges); // Vacation request submitted successfully
         }
 
-        private int GetLoggedInUserId()
+        private string? GetLoggedInUserId()
         {
             // Retrieve the current user's claims
             var claimsIdentity = HttpContext.User.Identity as ClaimsIdentity;
 
             // Find the claim that holds the user ID
-            var userIdClaim = claimsIdentity?.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
+            var userIdClaim = claimsIdentity?.Claims.FirstOrDefault(c => c.Type == "username");
 
-            if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out int userId))
-            {
-                throw new ApplicationException("Unable to retrieve user ID.");
-            }
-
-            return userId;
+            return userIdClaim.Value;
         }
 
 

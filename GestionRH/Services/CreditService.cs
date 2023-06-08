@@ -11,20 +11,20 @@ namespace GestionRH.Services
     }
     public class CreditService : ICreditService
     {
-        private readonly ICreditRepository creditRepository;
+        private readonly ICreditRepository _creditRepository;
 
         public CreditService(ICreditRepository creditRepository)
         {
-            creditRepository = creditRepository;
+            _creditRepository = creditRepository;
         }
         public Credit GetCreditRequestById(int id)
         {
-            return creditRepository.GetById(id);
+            return _creditRepository.GetById(id);
         }
 
         public void UpdateCreditRequest(Credit creditRequest)
         {
-            creditRepository.Update(creditRequest);
+            _creditRepository.Update(creditRequest);
         }
     }
 }

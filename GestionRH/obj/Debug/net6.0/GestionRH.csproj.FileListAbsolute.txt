@@ -283,3 +283,5 @@ C:\Users\yassi\Downloads\GestionRH\GestionRH\bin\Debug\net6.0\System.Text.Json.d
 C:\Users\yassi\Downloads\GestionRH\GestionRH\bin\Debug\net6.0\runtimes\browser\lib\net6.0\System.Text.Encodings.Web.dll
 C:\Users\yassi\Downloads\GestionRH\GestionRH\bin\Debug\net6.0\BCrypt.Net-Next.dll
 C:\Users\yassi\Downloads\GestionRH\GestionRH\bin\Debug\net6.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+C:\Users\yassi\Downloads\GestionRH\GestionRH\bin\Debug\net6.0\Microsoft.AspNetCore.JsonPatch.dll
+C:\Users\yassi\Downloads\GestionRH\GestionRH\bin\Debug\net6.0\Microsoft.AspNetCore.Mvc.NewtonsoftJson.dll

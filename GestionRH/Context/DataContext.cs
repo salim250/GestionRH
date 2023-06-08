@@ -1,9 +1,11 @@
 using GestionRH.Model;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Microsoft.Extensions.Options;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Entity.Core.Metadata.Edm;
 
 
 namespace GestionRH.Context
@@ -29,7 +31,21 @@ namespace GestionRH.Context
         public IDbConnection CreateConnection()
             => new SqlConnection(_connectionString);
 
-
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder
+            .Entity<Credit>()
+                .Property(d => d.Status)
+                .HasConversion(new EnumToStringConverter<Status>());
+            modelBuilder
+            .Entity<Conge>()
+                .Property(d => d.Status)
+                .HasConversion(new EnumToStringConverter<Status>());
+            modelBuilder
+            .Entity<Autorisation>()
+                .Property(d => d.Status)
+                .HasConversion(new EnumToStringConverter<Status>());
+        }
 
         #region Déclaration DbSet
         public virtual DbSet<Credit> Credit { get; set; }

@@ -4,6 +4,7 @@ using GestionRH.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GestionRH.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20230607134542_Migration4")]
+    partial class Migration4
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -33,7 +36,7 @@ namespace GestionRH.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("EmployeId")
+                    b.Property<int>("EmployeId")
                         .HasColumnType("int");
 
                     b.Property<string>("HeureRetour")
@@ -44,9 +47,8 @@ namespace GestionRH.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -72,9 +74,8 @@ namespace GestionRH.Migrations
                     b.Property<int?>("EmployeId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
 
                     b.Property<string>("TypeConge")
                         .HasColumnType("nvarchar(max)");
@@ -101,7 +102,7 @@ namespace GestionRH.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("EmployeId")
+                    b.Property<int>("EmployeId")
                         .HasColumnType("int");
 
                     b.Property<float>("MontantCredit")
@@ -111,9 +112,8 @@ namespace GestionRH.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -187,7 +187,9 @@ namespace GestionRH.Migrations
                 {
                     b.HasOne("GestionRH.Model.Employe", "Employe")
                         .WithMany("Autorisations")
-                        .HasForeignKey("EmployeId");
+                        .HasForeignKey("EmployeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Employe");
                 });
@@ -205,7 +207,9 @@ namespace GestionRH.Migrations
                 {
                     b.HasOne("GestionRH.Model.Employe", "Employe")
                         .WithMany("Credits")
-                        .HasForeignKey("EmployeId");
+                        .HasForeignKey("EmployeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Employe");
                 });

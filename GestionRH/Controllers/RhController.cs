@@ -4,6 +4,7 @@ using GestionRH.Model;
 using GestionRH.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 using System.Security.Claims;
 
 namespace GestionRH.Controllers
@@ -13,15 +14,15 @@ namespace GestionRH.Controllers
     public class RhController : ControllerBase
     {
         private readonly IExitPermitService _exitPermitService;
-        private readonly IVacationService vacationService;
-        private readonly ICreditService creditService;
+        private readonly IVacationService _vacationService;
+        private readonly ICreditService _creditService;
         private readonly DataContext _context;
-        RhController(DataContext context,IExitPermitService _exitPermitService, IVacationService vacationService, ICreditService creditService)
+        public RhController(DataContext context,IExitPermitService exitPermitService, IVacationService vacationService, ICreditService creditService)
         {
-            _exitPermitService = _exitPermitService;
-            vacationService = vacationService;
+            _exitPermitService = exitPermitService;
+            _vacationService = vacationService;
             _context = context;
-            creditService = creditService;
+            _creditService = creditService;
         }
 
         [HttpPut("exit-permit/{id}")]
@@ -61,7 +62,7 @@ namespace GestionRH.Controllers
         {
 
             // Retrieve the exit permit request by ID from the database
-            var vacationRequest = vacationService.GetVacationRequestById(id);
+            var vacationRequest = _vacationService.GetVacationRequestById(id);
 
             // Check if the exit permit request exists
             if (vacationRequest == null)
@@ -80,7 +81,7 @@ namespace GestionRH.Controllers
             }
 
             // Save the changes to the database
-            vacationService.UpdateVacationRequest(vacationRequest);
+            _vacationService.UpdateVacationRequest(vacationRequest);
 
             // Return the updated exit permit request
             return Ok(vacationRequest);
@@ -92,7 +93,7 @@ namespace GestionRH.Controllers
         {
 
             // Retrieve the exit permit request by ID from the database
-            var creditRequest = creditService.GetCreditRequestById(id);
+            var creditRequest = _creditService.GetCreditRequestById(id);
 
             // Check if the exit permit request exists
             if (creditRequest == null)
@@ -111,7 +112,7 @@ namespace GestionRH.Controllers
             }
 
             // Save the changes to the database
-            creditService.UpdateCreditRequest(creditRequest);
+            _creditService.UpdateCreditRequest(creditRequest);
 
             // Return the updated exit permit request
             return Ok(creditRequest);
@@ -129,7 +130,7 @@ namespace GestionRH.Controllers
         [HttpGet]
         [Route("ExitPermitHistories")]
         [Authorize(Roles = "ResponsableRH")]
-        public async Task<IActionResult> ExitPermitHistories()
+        public IActionResult ExitPermitHistories()
         {
             var exitPermit = _context.Autorisation.ToList();
             return Ok(exitPermit); // Vacation request submitted successfully

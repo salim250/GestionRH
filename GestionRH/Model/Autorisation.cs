@@ -7,6 +7,6 @@ namespace GestionRH.Model
         public string HeureSortie { get; set; }
         public string HeureRetour { get; set; }
         public Status Status { get; set; }
-        public Employe Employe { get; set; }
+        public Employe? Employe { get; set; }
     }
 }

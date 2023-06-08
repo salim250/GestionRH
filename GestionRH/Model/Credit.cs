@@ -3,7 +3,7 @@
     public class Credit
     {
         public int Id { get; set; }
-        public Employe Employe { get; set; }
+        public Employe? Employe { get; set; }
         public string ReferenceCredit { get; set; }
         public float MontantCredit { get; set; }
         public DateTime Duree { get; set; }
